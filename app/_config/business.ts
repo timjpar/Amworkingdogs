@@ -8,7 +8,30 @@ import { LINKS } from "@/app/_config/links";
  * listing — NAP consistency across the web is a local-SEO ranking signal.
  */
 
-export const SITE_URL = "https://amworkingdogs.com";
+/**
+ * Canonical origin, used for canonicals, the sitemap, robots.txt, OG image URLs,
+ * and JSON-LD ids. Getting this wrong points Google at a domain that isn't live,
+ * so it resolves in priority order rather than being hard-coded:
+ *
+ *   1. NEXT_PUBLIC_SITE_URL — set this once the real domain is attached.
+ *   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel sets this to the project's primary
+ *      production domain, so a plain *.vercel.app deploy is self-describing and
+ *      it flips to the custom domain automatically once one is assigned.
+ *   3. localhost for local dev.
+ *
+ * No trailing slash — callers concatenate paths directly.
+ */
+function resolveSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercelHost) return `https://${vercelHost}`;
+
+  return "http://localhost:3000";
+}
+
+export const SITE_URL = resolveSiteUrl();
 
 export const BUSINESS = {
   name: "AM Working Dogs",

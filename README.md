@@ -69,10 +69,34 @@ The choice persists in `localStorage` under `awd-theme`, and an inline script in
 Always style from the semantic tokens (`var(--c-brand)`, `var(--c-ink)`, `var(--c-panel)`…)
 rather than hard-coded hex, or the themes will break.
 
+## Deploying (Vercel)
+
+The project is a stock Next.js app — Vercel auto-detects the framework, and no
+build configuration is needed. Import the GitHub repo at
+[vercel.com/new](https://vercel.com/new) and every push to `main` deploys.
+
+### Site URL
+
+`SITE_URL` (in `app/_config/business.ts`) drives canonicals, `sitemap.xml`,
+`robots.txt`, OG image URLs, and the JSON-LD ids. It resolves in this order:
+
+1. `NEXT_PUBLIC_SITE_URL` — set this to pin an exact origin.
+2. `VERCEL_PROJECT_PRODUCTION_URL` — set by Vercel automatically. A plain
+   `*.vercel.app` deploy describes itself correctly, and it switches to the
+   custom domain on its own once one is attached to the project.
+3. `http://localhost:3000` for local dev.
+
+So **you don't have to set anything** to deploy correctly. Only set
+`NEXT_PUBLIC_SITE_URL` if you need to override what Vercel reports — for example
+to force `https://amworkingdogs.com` while a `www` domain is also attached.
+
+Because every page is statically prerendered, this value is baked in at build
+time: after changing the domain or the env var, redeploy so the sitemap and
+canonicals pick it up.
+
 ## Before going live
 
-- [ ] Point `SITE_URL` in `app/_config/business.ts` at the real domain (currently
-      `https://amworkingdogs.com`) — it feeds canonicals, the sitemap, and JSON-LD.
+- [ ] Attach the real domain in Vercel (Project → Settings → Domains), then redeploy.
 - [ ] Set up a dedicated email/phone if the dogs shouldn't share AMRabbits' contact info.
 - [ ] Wire up the contact form. `app/_actions/contact.ts` currently validates and
       logs to the server console — it does **not** deliver mail yet. Add Resend/SES
