@@ -1,0 +1,316 @@
+@import "tailwindcss";
+
+/* ============================================================
+   THEME VARIABLES
+   Each [data-theme] block defines semantic color tokens.
+   The flash-prevention script in layout.tsx sets data-theme
+   before React hydrates, so there is no color flash.
+   ============================================================ */
+
+/* Default = ridgeline (also set as fallback in :root) */
+:root {
+  --c-page: #f8f7f4;
+  --c-panel: #ecebe5;
+  --c-brand: #4a5d4e;
+  --c-brand-fg: #ffffff;
+  --c-accent: #c68a3e;
+  --c-accent-fg: #1f1a12;
+  --c-link: #3c6350;
+  --c-ink: #2b2a26;
+  --c-ink-2: #6a6860;
+  --c-title: #23312a;
+  --c-rail: #2f3d34;
+  --c-rail-fg: #f6f5f1;
+  --c-line: #d6d4cb;
+  --c-input-bg: #ffffff;
+  --font-display: var(--font-bitter, "Bitter"), serif;
+  --font-body: var(--font-source-sans, "Source Sans 3"), sans-serif;
+  --r-card: 0.75rem;
+  --r-btn: 0.5rem;
+}
+
+[data-theme="ridgeline"] {
+  --c-page: #f8f7f4;
+  --c-panel: #ecebe5;
+  --c-brand: #4a5d4e;
+  --c-brand-fg: #ffffff;
+  --c-accent: #c68a3e;
+  --c-accent-fg: #1f1a12;
+  --c-link: #3c6350;
+  --c-ink: #2b2a26;
+  --c-ink-2: #6a6860;
+  --c-title: #23312a;
+  --c-rail: #2f3d34;
+  --c-rail-fg: #f6f5f1;
+  --c-line: #d6d4cb;
+  --c-input-bg: #ffffff;
+  --font-display: var(--font-bitter, "Bitter"), serif;
+  --font-body: var(--font-source-sans, "Source Sans 3"), sans-serif;
+  --r-card: 0.75rem;
+  --r-btn: 0.5rem;
+}
+
+[data-theme="pasture"] {
+  --c-page: #f7faf5;
+  --c-panel: #e6efdf;
+  --c-brand: #5c7f4a;
+  --c-brand-fg: #ffffff;
+  --c-accent: #d9a441;
+  --c-accent-fg: #221b0e;
+  --c-link: #4a6b3b;
+  --c-ink: #262b22;
+  --c-ink-2: #64705c;
+  --c-title: #2b3d22;
+  --c-rail: #3c5730;
+  --c-rail-fg: #f7faf5;
+  --c-line: #cddcc2;
+  --c-input-bg: #ffffff;
+  --font-display: var(--font-bitter, "Bitter"), serif;
+  --font-body: var(--font-source-sans, "Source Sans 3"), sans-serif;
+  --r-card: 0.75rem;
+  --r-btn: 0.5rem;
+}
+
+[data-theme="clay"] {
+  --c-page: #fbf7f3;
+  --c-panel: #f1e6da;
+  --c-brand: #9c5a34;
+  --c-brand-fg: #ffffff;
+  --c-accent: #4f6b57;
+  --c-accent-fg: #ffffff;
+  --c-link: #8a4e2c;
+  --c-ink: #33271f;
+  --c-ink-2: #756255;
+  --c-title: #5c3520;
+  --c-rail: #4a2f1e;
+  --c-rail-fg: #fbf7f3;
+  --c-line: #e0cdba;
+  --c-input-bg: #ffffff;
+  --font-display: var(--font-bitter, "Bitter"), serif;
+  --font-body: var(--font-source-sans, "Source Sans 3"), sans-serif;
+  --r-card: 0.75rem;
+  --r-btn: 0.5rem;
+}
+
+[data-theme="nightwatch"] {
+  --c-page: #191c1a;
+  --c-panel: #232825;
+  --c-brand: #7fa383;
+  --c-brand-fg: #141715;
+  --c-accent: #d9a441;
+  --c-accent-fg: #1b160c;
+  --c-link: #9dc0a1;
+  --c-ink: #e4e6e2;
+  --c-ink-2: #a3a8a2;
+  --c-title: #f0f2ee;
+  --c-rail: #10120f;
+  --c-rail-fg: #eceee9;
+  --c-line: #363c38;
+  --c-input-bg: #20241f;
+  --font-display: var(--font-bitter, "Bitter"), serif;
+  --font-body: var(--font-source-sans, "Source Sans 3"), sans-serif;
+  --r-card: 0.75rem;
+  --r-btn: 0.5rem;
+}
+
+/* ============================================================
+   TAILWIND v4 THEME TOKENS
+   Maps CSS variables → Tailwind utility classes.
+   bg-page, text-ink, bg-brand, etc.
+   ============================================================ */
+@theme inline {
+  --color-page: var(--c-page);
+  --color-panel: var(--c-panel);
+  --color-brand: var(--c-brand);
+  --color-brand-fg: var(--c-brand-fg);
+  --color-accent: var(--c-accent);
+  --color-accent-fg: var(--c-accent-fg);
+  --color-link: var(--c-link);
+  --color-ink: var(--c-ink);
+  --color-ink-2: var(--c-ink-2);
+  --color-title: var(--c-title);
+  --color-rail: var(--c-rail);
+  --color-rail-fg: var(--c-rail-fg);
+  --color-line: var(--c-line);
+  --color-input-bg: var(--c-input-bg);
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--c-page);
+  color: var(--c-ink);
+  line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  color: var(--c-title);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--c-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Smooth theme transitions on key properties */
+nav,
+footer,
+section,
+article,
+.card {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* ============================================================
+   UTILITY CLASSES (theme-aware)
+   ============================================================ */
+
+.rounded-card {
+  border-radius: var(--r-card);
+}
+
+.rounded-btn {
+  border-radius: var(--r-btn);
+}
+
+.input-base {
+  background-color: var(--c-input-bg);
+  border: 1.5px solid var(--c-line);
+  border-radius: var(--r-card);
+  color: var(--c-ink);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.input-base:focus {
+  border-color: var(--c-brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-brand) 30%, transparent);
+}
+
+/* Hero scrim — darker than the rabbitry site so white type stays legible
+   over the high-contrast pasture photography. */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, #000 35%, transparent) 0%,
+    color-mix(in srgb, #000 20%, transparent) 45%,
+    color-mix(in srgb, var(--c-rail) 75%, transparent) 100%
+  );
+}
+
+/* Photo hero scrim used on interior page banners. Both stops mix toward
+   `transparent` — mixing toward another solid color yields an opaque scrim
+   that hides the photograph entirely. */
+.page-hero-overlay {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--c-rail) 72%, transparent) 0%,
+    color-mix(in srgb, var(--c-rail) 48%, transparent) 100%
+  );
+}
+
+/* Night Watch's rail is near-black, so the same alpha buries the photo.
+   Less scrim gets equivalent contrast for the white type. */
+[data-theme="nightwatch"] .page-hero-overlay {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--c-rail) 55%, transparent) 0%,
+    color-mix(in srgb, var(--c-rail) 32%, transparent) 100%
+  );
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--c-rail) 12%, transparent),
+    0 1px 3px color-mix(in srgb, var(--c-rail) 8%, transparent);
+}
+
+.shadow-soft-lg {
+  box-shadow: 0 10px 32px color-mix(in srgb, var(--c-rail) 16%, transparent),
+    0 2px 6px color-mix(in srgb, var(--c-rail) 10%, transparent);
+}
+
+.section-band {
+  background-color: var(--c-accent);
+  color: var(--c-accent-fg);
+}
+
+.section-band h1,
+.section-band h2,
+.section-band h3,
+.section-band p {
+  color: var(--c-accent-fg);
+}
+
+.brand-band {
+  background-color: var(--c-brand);
+  color: var(--c-brand-fg);
+}
+
+.brand-band h1,
+.brand-band h2,
+.brand-band h3,
+.brand-band p {
+  color: var(--c-brand-fg);
+}
+
+/* Rail (nav + footer) */
+.rail-bg {
+  background-color: var(--c-rail);
+  color: var(--c-rail-fg);
+}
+
+.rail-bg h1,
+.rail-bg h2,
+.rail-bg h3,
+.rail-bg p,
+.rail-bg a {
+  color: var(--c-rail-fg);
+}
+
+.divider {
+  border-color: var(--c-line);
+}
+
+.pill-soft-accent {
+  background-color: color-mix(in srgb, var(--c-accent) 22%, var(--c-page));
+  color: color-mix(in srgb, var(--c-accent-fg) 70%, var(--c-ink));
+}
+
+.pill-soft-brand {
+  background-color: color-mix(in srgb, var(--c-brand) 18%, var(--c-page));
+  color: var(--c-brand);
+}
+
+/* Subtle top-edge rule used to separate stacked full-bleed sections. */
+.edge-top {
+  border-top: 1px solid var(--c-line);
+}
