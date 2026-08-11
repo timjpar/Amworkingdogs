@@ -4,29 +4,30 @@ import Image from "next/image";
 import { PageHero } from "@/app/_components/ui/PageHero";
 import { SectionHeader } from "@/app/_components/ui/SectionHeader";
 import { CTABanner } from "@/app/_components/ui/CTABanner";
-import { GalleryGrid } from "@/app/_components/ui/GalleryGrid";
+import { PuppyCard } from "@/app/_components/cards/PuppyCard";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { puppyProductSchema, breadcrumbSchema } from "@/app/_lib/schema";
-import { CURRENT_LITTER, includedWithPuppy, matchingNotes } from "@/app/_data/litter";
-import { puppyPhotos } from "@/app/_data/gallery";
+import {
+  LITTER,
+  litterCounts,
+  puppiesByAvailability,
+  includedWithPuppy,
+  matchingNotes,
+} from "@/app/_data/litter";
 import { CROSS } from "@/app/_data/breed";
 import { PUPPY_PRICE, DEPOSIT } from "@/app/_config/business";
 import { LINKS } from "@/app/_config/links";
 
 export const metadata: Metadata = {
   title: "Available Puppies",
-  description:
-    `Kangal x Great Pyrenees livestock guardian puppies for sale in Newport, TN — $${PUPPY_PRICE} for males and females. Health checked, wormed, first shots, raised with poultry and stock.`,
+  description: `Kangal x Great Pyrenees livestock guardian puppies for sale in Newport, TN — $${PUPPY_PRICE} for males and females. Health checked, wormed, first shots, raised with poultry and stock.`,
 };
 
-const statusCopy: Record<
-  typeof CURRENT_LITTER.status,
-  { badge: string; heading: string; sub: string }
-> = {
+const statusCopy = {
   available: {
     badge: "Puppies available",
-    heading: "Puppies Available Now",
-    sub: "Call or text to check what's still open — the list moves fast, and this page won't always be same-day accurate.",
+    heading: "Meet the Litter",
+    sub: "Every pup below is from the current litter. Call or text to check what's still open — the list moves fast, and this page won't always be same-day accurate.",
   },
   expecting: {
     badge: "Litter expected",
@@ -38,11 +39,11 @@ const statusCopy: Record<
     heading: "Between Litters Right Now",
     sub: "We're expecting again before long. Call and we'll tell you where things stand and put you on the list.",
   },
-};
+} as const;
 
 export default function PuppiesPage() {
-  const copy = statusCopy[CURRENT_LITTER.status];
-  const remaining = Math.max(CURRENT_LITTER.totalPups - CURRENT_LITTER.reserved, 0);
+  const copy = statusCopy[LITTER.status];
+  const showRoster = LITTER.status !== "between";
 
   return (
     <>
@@ -65,98 +66,111 @@ export default function PuppiesPage() {
       />
 
       {/* Status + pricing */}
-      <section className="py-16 px-4" style={{ background: "var(--c-page)" }}>
-        <div className="max-w-4xl mx-auto">
-          <div
-            className="rounded-card border p-8 md:p-10 shadow-soft text-center"
-            style={{ background: "var(--c-panel)", borderColor: "var(--c-line)" }}
+      <section className="py-14 px-4" style={{ background: "var(--c-page)" }}>
+        <div className="max-w-4xl mx-auto text-center">
+          <span
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4"
+            style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)" }}
           >
-            <span
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide mb-4"
-              style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)" }}
-            >
-              <span aria-hidden="true">🐾</span>
-              {copy.badge}
-            </span>
+            <span aria-hidden="true">🐾</span>
+            {copy.badge}
+          </span>
 
-            <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "var(--c-title)" }}>
-              {copy.heading}
-            </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: "var(--c-title)" }}>
+            {copy.heading}
+          </h2>
 
-            <p className="text-base leading-relaxed max-w-xl mx-auto mb-6" style={{ color: "var(--c-ink)" }}>
-              {copy.sub}
-            </p>
+          <p className="text-base leading-relaxed max-w-xl mx-auto" style={{ color: "var(--c-ink)" }}>
+            {copy.sub}
+          </p>
 
-            {CURRENT_LITTER.status !== "between" && (
-              <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 mb-6 text-sm">
-                <span style={{ color: "var(--c-ink-2)" }}>
-                  <strong style={{ color: "var(--c-title)" }}>{CURRENT_LITTER.born}</strong>
-                </span>
-                <span style={{ color: "var(--c-ink-2)" }}>
-                  <strong style={{ color: "var(--c-title)" }}>{CURRENT_LITTER.readyDate}</strong>
-                </span>
-                <span style={{ color: "var(--c-ink-2)" }}>
-                  <strong style={{ color: "var(--c-title)" }}>
-                    {CURRENT_LITTER.reserved} of {CURRENT_LITTER.totalPups}
-                  </strong>{" "}
-                  spoken for
-                  {remaining > 0 ? ` · ${remaining} open` : ""}
-                </span>
+          {showRoster && (
+            <>
+              {/* Litter stat strip */}
+              <div
+                className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-card overflow-hidden border"
+                style={{ background: "var(--c-line)", borderColor: "var(--c-line)" }}
+              >
+                {[
+                  { value: `$${PUPPY_PRICE}`, label: "Males & females" },
+                  { value: litterCounts.available, label: "Still available" },
+                  {
+                    value: `${litterCounts.females}F / ${litterCounts.males}M`,
+                    label: `${litterCounts.total} in the litter`,
+                  },
+                  { value: "8 wks", label: "Go-home age" },
+                ].map((stat) => (
+                  <div key={stat.label} className="px-4 py-5" style={{ background: "var(--c-panel)" }}>
+                    <p
+                      className="text-2xl font-bold"
+                      style={{ color: "var(--c-brand)", fontFamily: "var(--font-display)" }}
+                    >
+                      {stat.value}
+                    </p>
+                    <p className="text-xs mt-1" style={{ color: "var(--c-ink-2)" }}>
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
               </div>
-            )}
 
-            {CURRENT_LITTER.note && CURRENT_LITTER.status !== "between" && (
-              <p className="text-sm italic mb-8 max-w-lg mx-auto" style={{ color: "var(--c-ink-2)" }}>
-                {CURRENT_LITTER.note}
+              <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
+                {LITTER.born} · {LITTER.readyDate}
               </p>
-            )}
+              {LITTER.note && (
+                <p className="text-sm italic mt-2 max-w-lg mx-auto" style={{ color: "var(--c-ink-2)" }}>
+                  {LITTER.note}
+                </p>
+              )}
+            </>
+          )}
 
-            {/* Pricing */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-lg mx-auto mb-8">
-              {["Female", "Male"].map((label) => (
-                <div
-                  key={label}
-                  className="rounded-card border p-6"
-                  style={{ background: "var(--c-page)", borderColor: "var(--c-line)" }}
-                >
-                  <p
-                    className="text-sm font-semibold uppercase tracking-wider mb-2"
-                    style={{ color: "var(--c-ink-2)" }}
-                  >
-                    {label}
-                  </p>
-                  <p className="text-4xl font-bold" style={{ color: "var(--c-brand)" }}>
-                    ${PUPPY_PRICE}
-                  </p>
-                </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+            <a
+              href={LINKS.phoneHref}
+              className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
+              style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
+            >
+              Call or Text {LINKS.phone}
+            </a>
+            <Link
+              href="/reserve"
+              className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg border-2 transition-all hover:opacity-80"
+              style={{ borderColor: "var(--c-brand)", color: "var(--c-brand)", textDecoration: "none" }}
+            >
+              Reserve With a Deposit
+            </Link>
+          </div>
+
+          <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
+            A ${DEPOSIT}{" "}
+            deposit holds your pick and comes off the total. Deposits aren&apos;t required
+            for same-day pickups.
+          </p>
+        </div>
+      </section>
+
+      {/* THE ROSTER */}
+      {showRoster && (
+        <section className="pb-16 px-4" style={{ background: "var(--c-page)" }}>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {puppiesByAvailability.map((puppy, i) => (
+                <PuppyCard key={puppy.id} puppy={puppy} priority={i < 3} />
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href={LINKS.phoneHref}
-                className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
-                style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
-              >
-                Call or Text {LINKS.phone}
-              </a>
-              <Link
-                href="/reserve"
-                className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg border-2 transition-all hover:opacity-80"
-                style={{ borderColor: "var(--c-brand)", color: "var(--c-brand)", textDecoration: "none" }}
-              >
-                Reserve With a Deposit
-              </Link>
-            </div>
-
-            <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
-              A ${DEPOSIT}{" "}
-              deposit holds your pick and comes off the total. Deposits
-              aren&apos;t required for same-day pickups.
+            <p className="text-sm text-center mt-10" style={{ color: "var(--c-ink-2)" }}>
+              Puppies go by collar color until their new families name them. Call or text
+              Michael at{" "}
+              <a href={LINKS.phoneHref} style={{ color: "var(--c-link)" }}>
+                {LINKS.phone}
+              </a>{" "}
+              and say which collar you&apos;re after.
             </p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* What's included */}
       <section className="py-16 px-4" style={{ background: "var(--c-panel)" }}>
@@ -176,11 +190,7 @@ export default function PuppiesPage() {
             </div>
 
             <div>
-              <SectionHeader
-                title="What Goes Home With You"
-                align="left"
-                className="mb-6"
-              />
+              <SectionHeader title="What Goes Home With You" align="left" className="mb-6" />
               <ul className="space-y-3">
                 {includedWithPuppy.map((item) => (
                   <li key={item} className="flex items-start gap-3">
@@ -233,18 +243,6 @@ export default function PuppiesPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Photos */}
-      <section className="pb-16 px-4" style={{ background: "var(--c-page)" }}>
-        <div className="max-w-5xl mx-auto">
-          <SectionHeader
-            title="Puppy Photos"
-            subtitle="From this and recent litters."
-            className="mb-10"
-          />
-          <GalleryGrid images={puppyPhotos} />
         </div>
       </section>
 

@@ -17,7 +17,7 @@ required.
 
 | What | Where |
 | --- | --- |
-| **Current litter** (status, counts, ready date) | `app/_data/litter.ts` |
+| **The puppy roster** (who's available, sold, notes) | `app/_data/litter.ts` |
 | Puppy price, deposit | `app/_config/business.ts` (`PUPPY_PRICE`, `DEPOSIT`) |
 | Phone, email, socials, payment links | `app/_config/links.ts` |
 | Business name, address, service areas | `app/_config/business.ts` |
@@ -29,10 +29,29 @@ required.
 
 ### Updating the litter
 
-`app/_data/litter.ts` drives three things at once: the `/puppies` page headline,
-the reserved/open count, and the sitewide announcement banner. Set `status` to
-`"available"`, `"expecting"`, or `"between"` and the wording changes everywhere —
-the banner can't drift out of sync with the page.
+Everything about the current puppies lives in `app/_data/litter.ts`.
+
+**Marking a puppy sold** is a one-word change on that puppy's entry:
+
+```ts
+{ id: "red", name: "Red", sex: "Male", status: "sold", ... }
+```
+
+`status` can be `"available"`, `"reserved"`, or `"sold"`. Sold and reserved pups
+drop to the bottom of the grid and grey out automatically. Every count on the
+site is derived from the roster — the "still available" number, the F/M split,
+the litter size, and the sitewide announcement banner — so they can't drift out
+of sync with each other. There is no second place to update.
+
+**Starting a new litter:** replace the `puppies` array, and set `LITTER.status`
+to `"available"`, `"expecting"`, or `"between"`. Between litters, the `/puppies`
+page hides the roster and rewrites its own headline. Portraits flow into the
+gallery automatically — no need to touch `gallery.ts`.
+
+**A note on the per-puppy `note` field.** These describe individual animals to
+buyers, so they should be accurate. The ones currently in the file were drafted
+from the photos alone: coat, markings, and build are observable, but anything
+about temperament is a guess and needs correcting or deleting.
 
 ### Adding photos
 
@@ -104,5 +123,8 @@ canonicals pick it up.
 - [ ] Add the Google Search Console token to `GOOGLE_SITE_VERIFICATION`.
 - [ ] Confirm the health-guarantee wording in `app/buying/policy/page.tsx` matches
       what Michael actually offers. It was drafted as a reasonable default.
-- [ ] Replace the placeholder litter details in `app/_data/litter.ts` with the real
-      counts and dates.
+- [ ] **Set the real status on each puppy** in `app/_data/litter.ts`. All 13 are
+      currently marked `"available"` because no sales status was known — correct any
+      that are already reserved or sold.
+- [ ] **Review the per-puppy notes.** The temperament lines were inferred from the
+      photos, not observed. They read as promises to a buyer.

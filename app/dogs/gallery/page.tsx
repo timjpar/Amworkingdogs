@@ -5,7 +5,7 @@ import { CTABanner } from "@/app/_components/ui/CTABanner";
 import { GalleryGrid } from "@/app/_components/ui/GalleryGrid";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { breadcrumbSchema } from "@/app/_lib/schema";
-import { puppyPhotos, adultPhotos } from "@/app/_data/gallery";
+import { litterPortraits, puppyPhotos, adultPhotos } from "@/app/_data/gallery";
 import { LINKS } from "@/app/_config/links";
 
 export const metadata: Metadata = {
@@ -35,7 +35,18 @@ export default function GalleryPage() {
       <section className="py-16 px-4" style={{ background: "var(--c-page)" }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeader
-            title="Puppies"
+            title="The Current Litter"
+            subtitle="Every pup, by collar color. Tap any photo to see it full screen."
+            className="mb-10"
+          />
+          <GalleryGrid images={litterPortraits} aspect="portrait" />
+        </div>
+      </section>
+
+      <section className="pb-16 px-4" style={{ background: "var(--c-page)" }}>
+        <div className="max-w-5xl mx-auto">
+          <SectionHeader
+            title="Puppies Growing Up"
             subtitle="From newborn to eight weeks — straw nest to tall grass."
             className="mb-10"
           />

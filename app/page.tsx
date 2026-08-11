@@ -10,7 +10,8 @@ import { Fence } from "@/app/_components/ui/decorations/Fence";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { puppyProductSchema } from "@/app/_lib/schema";
 import { CROSS, parentBreeds, suitedFor } from "@/app/_data/breed";
-import { puppyPhotos } from "@/app/_data/gallery";
+import { litterPortraits } from "@/app/_data/gallery";
+import { litterCounts } from "@/app/_data/litter";
 import { PUPPY_PRICE } from "@/app/_config/business";
 import { LINKS } from "@/app/_config/links";
 
@@ -305,21 +306,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ PUPPY PREVIEW ============ */}
+      {/* ============ CURRENT LITTER PREVIEW ============ */}
       <section className="py-20 px-4" style={{ background: "var(--c-panel)" }}>
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            title="This Year's Pups"
-            subtitle="Fawn coats, black masks, and a whole lot of feet to grow into."
-            eyebrow="From the barn"
+            title="Meet This Litter"
+            subtitle={
+              litterCounts.available > 0
+                ? `${litterCounts.available} of ${litterCounts.total} still available. They go by collar color until their new families name them.`
+                : "They go by collar color until their new families name them."
+            }
+            eyebrow="On the ground now"
             decoration={<Paw size={36} color="var(--c-accent)" />}
             className="mb-12"
           />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {puppyPhotos.slice(0, 8).map((img) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {litterPortraits.slice(0, 12).map((img, i) => (
               <div
                 key={img.src}
-                className="relative aspect-square rounded-card overflow-hidden border"
+                className="relative aspect-[3/4] rounded-card overflow-hidden border"
                 style={{ borderColor: "var(--c-line)" }}
               >
                 <Image
@@ -327,18 +332,26 @@ export default function HomePage() {
                   alt={img.alt}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-300"
-                  sizes="(max-width: 768px) 50vw, 25vw"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                  loading={i < 6 ? "eager" : "lazy"}
                 />
               </div>
             ))}
           </div>
-          <div className="mt-10 text-center">
+          <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/dogs/gallery"
+              href="/puppies"
               className="inline-flex items-center justify-center h-12 px-8 rounded-btn font-semibold transition-all hover:opacity-90"
               style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
             >
-              View the Full Gallery
+              See Every Puppy
+            </Link>
+            <Link
+              href="/dogs/gallery"
+              className="inline-flex items-center justify-center h-12 px-8 rounded-btn font-semibold border-2 transition-all hover:opacity-80"
+              style={{ borderColor: "var(--c-brand)", color: "var(--c-brand)", textDecoration: "none" }}
+            >
+              Full Gallery
             </Link>
           </div>
         </div>

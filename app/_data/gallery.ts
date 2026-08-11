@@ -1,4 +1,15 @@
+import { puppies } from "@/app/_data/litter";
+
 export type GalleryImage = { src: string; alt: string };
+
+/**
+ * Portraits of the current litter, derived from the roster so a new litter
+ * only has to be entered once (in litter.ts) to show up here too.
+ */
+export const litterPortraits: GalleryImage[] = puppies.map((p) => ({
+  src: p.image,
+  alt: `${p.name} — ${p.sex.toLowerCase()} Kangal x Great Pyrenees livestock guardian puppy`,
+}));
 
 /** Adults at work — used on the breed page and the front of the gallery. */
 export const adultPhotos: GalleryImage[] = [
@@ -97,4 +108,8 @@ export const puppyPhotos: GalleryImage[] = [
 ];
 
 /** Everything, newest-feeling first — used on the gallery page. */
-export const allPhotos: GalleryImage[] = [...puppyPhotos, ...adultPhotos];
+export const allPhotos: GalleryImage[] = [
+  ...litterPortraits,
+  ...puppyPhotos,
+  ...adultPhotos,
+];
