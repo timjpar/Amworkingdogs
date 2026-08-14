@@ -1,4 +1,5 @@
 import type { FaqItem } from "@/app/_types";
+import { PUPPY_PRICE, DEPOSIT } from "@/app/_config/business";
 
 /**
  * Questions we actually get asked, by phone and at the gate.
@@ -19,8 +20,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     question: "How much are the puppies?",
-    answer:
-      "Puppies are $800, males and females alike. A $200 deposit holds your pick from the current litter and is applied toward the total. Deposits aren't required for same-day pickups.",
+    answer: `Puppies are $${PUPPY_PRICE}, males and females alike. A $${DEPOSIT} deposit holds your pick from the current litter and is applied toward the total. Deposits aren't required for same-day pickups.`,
   },
   {
     question: "How old are the puppies when they go home?",

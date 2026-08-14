@@ -20,8 +20,7 @@ export const metadata: Metadata = {
     absolute:
       "Livestock Guardian Dog Puppies for Sale in Tennessee | AM Working Dogs",
   },
-  description:
-    "Kangal x Great Pyrenees livestock guardian dog puppies for sale in Newport, TN. 75% Kangal, 25% Great Pyrenees — $800, raised from birth with poultry and stock. Serving East Tennessee & Western NC.",
+  description: `Kangal x Great Pyrenees livestock guardian dog puppies for sale in Newport, TN. 75% Kangal, 25% Great Pyrenees — $${PUPPY_PRICE}, raised from birth with poultry and stock. Serving East Tennessee & Western NC.`,
 };
 
 const whyItems = [

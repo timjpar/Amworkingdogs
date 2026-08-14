@@ -45,7 +45,7 @@ export const BUSINESS = {
   /** E.164-style for schema; display/href versions live in links.ts. */
   telephone: "+1-423-540-6566",
   founders: ["Michael Parsons", "Ali Parsons"],
-  /** Puppies run $800. */
+  /** Puppies run $500. */
   priceRange: "$$",
   /** Home-based kennel — no public street address. City-level only. */
   address: {
@@ -66,7 +66,7 @@ export const BUSINESS = {
 } as const;
 
 /** Flat price for a puppy, male or female. Drives pricing cards and Offer schema. */
-export const PUPPY_PRICE = 800;
+export const PUPPY_PRICE = 500;
 
 /** Deposit that holds a puppy from the current litter. */
 export const DEPOSIT = 200;
