@@ -96,15 +96,27 @@ build configuration is needed. Import the GitHub repo at
 
 ### Domains
 
-The main domain is **`easttnfarmdogs.com`**. `amworkingdogs.com` was the original
-one; it stays attached to the project but only 308s to the new domain, path and
-query intact, so old links and anything already indexed keep working.
+The main domain is **`easttnfarmdogs.com`**. Everything else 308s to it, path and
+query intact, so old links and anything already indexed keep working:
 
-Both live in `app/_config/domain.ts` — `PRIMARY_ORIGIN` and
-`RETIRED_HOST_PATTERN`. That module is imported by the app *and* by
-`next.config.ts`, which is the point: the canonical the app advertises and the
-redirect that retires the old domain can't drift apart. To change the main
-domain, edit that one file and attach the domain in Vercel.
+| Hostname | Role |
+| --- | --- |
+| `easttnfarmdogs.com` | production domain |
+| `www.easttnfarmdogs.com` | 308 → `easttnfarmdogs.com` |
+| `amworkingdogs.com` | 308 → `easttnfarmdogs.com` (the original domain) |
+| `www.amworkingdogs.com` | 308 → `easttnfarmdogs.com` |
+
+**Those redirects are configured on the project's domains in Vercel, not in this
+repo.** Vercel resolves them at the edge before the request reaches a deployment,
+which is why they cost nothing to serve and why there is deliberately no matching
+rule in `next.config.ts` — one would never execute. Vercel's model has no separate
+"production domain" flag: the production domain is simply the one with no redirect
+set, and every other hostname points at it.
+
+What the repo *does* own is what the site claims its address is — `PRIMARY_ORIGIN`
+in `app/_config/business.ts`, which drives canonicals, the sitemap, `robots.txt`,
+OG image URLs, and the JSON-LD ids. Vercel does not do that for you. Changing the
+main domain means editing that constant **and** repointing the redirects in Vercel.
 
 ### Site URL
 

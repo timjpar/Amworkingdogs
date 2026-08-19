@@ -1,5 +1,4 @@
 import { LINKS } from "@/app/_config/links";
-import { PRIMARY_ORIGIN } from "@/app/_config/domain";
 
 /**
  * Canonical business identity (NAP — Name, Address, Phone) for AM Working Dogs.
@@ -25,8 +24,16 @@ import { PRIMARY_ORIGIN } from "@/app/_config/domain";
  * throwaway hostname to compete with the real pages. The main domain is a
  * decision, not something to infer from the environment — so it's pinned.
  *
+ * This is only about what the site *says* its address is. Getting visitors from
+ * the old hostnames to this one is a separate job, done on the project's domains
+ * in Vercel rather than in app code — see README, "Domains".
+ *
  * No trailing slash — callers concatenate paths directly.
  */
+
+/** The site's main domain. */
+const PRIMARY_ORIGIN = "https://easttnfarmdogs.com";
+
 function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
