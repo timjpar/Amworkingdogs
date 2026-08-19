@@ -3,8 +3,10 @@
 import { headers } from "next/headers";
 import {
   CONTACT_LIMITS,
+  CONTACT_SUBJECTS,
   CONTACT_SUBJECT_VALUES,
 } from "@/app/_config/contact";
+import { CONTACT_FALLBACK, sendContactEmail } from "@/app/_lib/email";
 
 interface ContactFormData {
   name: string;
@@ -101,13 +103,28 @@ export async function submitContact(data: ContactFormData): Promise<ActionResult
     };
   }
 
-  // TODO: wire this to email delivery (Resend/SES) or a CRM webhook.
-  //
-  // Until that exists this action accepts the message and drops it — the form
-  // still reports success to the sender. Nothing here logs the sender's name,
-  // email, phone, or message body: runtime logs are retained and searchable,
-  // and there is no reason to put someone's contact details in them.
-  console.log("contact: submission received", {
+  const subjectLabel =
+    CONTACT_SUBJECTS.find((s) => s.value === safeSubject)?.label ?? "Enquiry";
+
+  const sent = await sendContactEmail({ name, email, phone, subjectLabel, message });
+
+  if (!sent.ok) {
+    // Report the failure rather than returning a success the sender can't
+    // distinguish from delivery. Someone asking about a puppy should find out
+    // now that it didn't go through, while they still have the page open.
+    // Reason only — never the sender's details, which is why the transport
+    // returns a code instead of echoing the provider's response body.
+    console.error("contact: delivery failed", {
+      reason: sent.reason,
+      subject: safeSubject,
+      timestamp: new Date().toISOString(),
+    });
+    return { success: false, error: CONTACT_FALLBACK };
+  }
+
+  // Non-identifying only: runtime logs are retained and searchable, and there
+  // is no reason for a buyer's contact details to sit in them.
+  console.log("contact: delivered", {
     subject: safeSubject,
     hasPhone: Boolean(phone),
     messageLength: message.length,
