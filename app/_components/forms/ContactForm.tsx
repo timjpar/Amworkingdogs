@@ -1,30 +1,60 @@
 "use client";
 
 import { useState } from "react";
-import { submitContact } from "@/app/_actions/contact";
+import { submitForm } from "@/app/_lib/submitForm";
+import { FormErrorNotice } from "@/app/_components/forms/FormErrorNotice";
 import { CONTACT_LIMITS, CONTACT_SUBJECTS } from "@/app/_config/contact";
 
 export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: string }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [showFallback, setShowFallback] = useState(false);
+
+  function fail(error: string, fallback = false) {
+    setStatus("error");
+    setErrorMsg(error);
+    setShowFallback(fallback);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
     const fd = new FormData(e.currentTarget);
-    const result = await submitContact({
-      name: fd.get("name") as string,
-      email: fd.get("email") as string,
-      phone: fd.get("phone") as string,
-      subject: fd.get("subject") as string,
-      message: fd.get("message") as string,
+    const read = (key: string) => ((fd.get(key) as string) ?? "").trim();
+
+    const name = read("name");
+    const email = read("email");
+    const phone = read("phone");
+    const message = read("message");
+
+    // `required` stops an empty field, but not one holding only spaces.
+    if (!name || !email || !message) {
+      fail("Please fill in all required fields.");
+      return;
+    }
+
+    // The email carries the label, not the <select> value it was chosen by.
+    const subjectLabel =
+      CONTACT_SUBJECTS.find((s) => s.value === read("subject"))?.label ?? "Something else";
+
+    const result = await submitForm({
+      // Both sites mail the same inbox, so the site name leads the subject.
+      subject: `AM Working Dogs — ${subjectLabel} — ${name}`,
+      fields: [
+        ["Name", name],
+        ["Email", email],
+        ["Phone", phone || "not given"],
+        ["About", subjectLabel],
+        ["Message", message],
+      ],
+      replyTo: email,
       honeypot: fd.get("_h") as string,
     });
+
     if (result.success) {
       setStatus("success");
     } else {
-      setStatus("error");
-      setErrorMsg(result.error ?? "Something went wrong. Please try again.");
+      fail(result.error ?? "Something went wrong. Please try again.", Boolean(result.showFallback));
     }
   }
 
@@ -100,15 +130,7 @@ export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: str
         />
       </div>
 
-      {status === "error" && (
-        <p
-          className="text-sm p-3 rounded-card"
-          style={{ background: "color-mix(in srgb, #b91c1c 12%, transparent)", color: "#b91c1c" }}
-          role="alert"
-        >
-          {errorMsg}
-        </p>
-      )}
+      {status === "error" && <FormErrorNotice message={errorMsg} showFallback={showFallback} />}
 
       <button
         type="submit"

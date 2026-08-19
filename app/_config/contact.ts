@@ -1,11 +1,11 @@
 /**
  * Shared contract for the contact form.
  *
- * Lives outside both the form and the server action because a `"use server"`
- * module may only export async functions — and because the allowlist and the
- * field limits have to be the *same* on the client that renders the form and
- * the action that validates it. The action is the real boundary: the form's
- * maxLength attributes are a courtesy to whoever is typing, nothing more.
+ * Kept apart from the form itself so the subject allowlist and the field limits
+ * have one home, shared by the markup that renders them and the submit helper
+ * that enforces them. Since delivery now goes straight from the browser to
+ * FormSubmit, there is no server-side boundary behind this: these caps keep an
+ * honest form honest, and FormSubmit's own filtering handles the rest.
  */
 
 export const CONTACT_SUBJECTS = [

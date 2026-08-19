@@ -117,9 +117,14 @@ canonicals pick it up.
 
 - [ ] Attach the real domain in Vercel (Project → Settings → Domains), then redeploy.
 - [ ] Set up a dedicated email/phone if the dogs shouldn't share AMRabbits' contact info.
-- [ ] Wire up the contact form. `app/_actions/contact.ts` currently validates and
-      logs to the server console — it does **not** deliver mail yet. Add Resend/SES
-      or a webhook there.
+- [ ] **Activate the contact form with FormSubmit.** The form posts from the
+      visitor's browser to `formsubmit.co` (see `app/_lib/submitForm.ts`), with
+      `LINKS.email` as the destination — no API key, account, or DNS to set up.
+      FormSubmit scopes activation to *email plus origin*, so the first
+      submission from the live domain sends a confirmation email to that
+      address that has to be clicked before anything delivers. Being active on
+      amrabbits.com does not carry over. This cannot be exercised from
+      localhost.
 - [ ] Add the Google Search Console token to `GOOGLE_SITE_VERIFICATION`.
 - [ ] Confirm the health-guarantee wording in `app/buying/policy/page.tsx` matches
       what Michael actually offers. It was drafted as a reasonable default.

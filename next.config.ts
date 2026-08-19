@@ -21,7 +21,7 @@ const isDev = process.env.NODE_ENV === "development";
  * Everything else is locked to 'self'. The site loads zero external
  * subresources — next/font self-hosts the Bitter/Source Sans files into
  * /_next/static/media, and the social/payment URLs are links, not loads — so
- * default-src 'self' needs no allowlist.
+ * only connect-src carries an allowlist, for the contact form's POST.
  */
 const csp = [
   "default-src 'self'",
@@ -31,6 +31,10 @@ const csp = [
   // CDN so no image transformation is billed and no bytes leave our origin.
   "img-src 'self' blob: data: https://live.staticflickr.com",
   "font-src 'self'",
+  // formsubmit.co receives the contact form's submission, which posts from the
+  // browser rather than the server — FormSubmit answers 403 to requests from
+  // cloud infrastructure. Same-origin fetches (RSC payloads) need 'self'.
+  "connect-src 'self' https://formsubmit.co",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -85,11 +89,6 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    serverActions: {
-      // The contact form is the only action; 16kb is ample and caps what a
-      // flood can push through the function. Default is 1MB.
-      bodySizeLimit: "16kb",
-    },
     // Reuse prefetched payloads for 30min instead of 5, so moving around the
     // site during one visit doesn't refetch the same RSC payloads.
     staleTimes: { static: 1800 },
