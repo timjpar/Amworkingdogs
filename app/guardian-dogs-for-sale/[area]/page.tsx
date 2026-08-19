@@ -179,6 +179,7 @@ export default async function ServiceAreaPage({
                 <Link
                   key={other.slug}
                   href={`/guardian-dogs-for-sale/${other.slug}`}
+                  prefetch={false}
                   className="px-4 py-2 rounded-btn text-sm font-medium border transition-colors hover:opacity-80"
                   style={{
                     background: "var(--c-panel)",

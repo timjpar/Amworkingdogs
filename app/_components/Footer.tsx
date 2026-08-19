@@ -56,6 +56,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={false}
                   className="block text-sm hover:opacity-100 transition-opacity"
                   style={{ color: "var(--c-rail-fg)", opacity: 0.7, textDecoration: "none" }}
                 >
@@ -78,6 +79,7 @@ export function Footer() {
                 <Link
                   key={area.slug}
                   href={`/guardian-dogs-for-sale/${area.slug}`}
+                  prefetch={false}
                   className="block text-sm hover:opacity-100 transition-opacity"
                   style={{ color: "var(--c-rail-fg)", opacity: 0.7, textDecoration: "none" }}
                 >
