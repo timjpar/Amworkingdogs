@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { PRIMARY_ORIGIN, RETIRED_HOST_PATTERN } from "./app/_config/domain";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -100,6 +101,18 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Everything converges on the main domain first, before the path rules
+      // below get a say — so a request to the old domain takes one hop to the
+      // new host and then, if it also needs a path rewrite, one more. Matching
+      // on `host` keeps this in the routing layer (Vercel compiles it into the
+      // deployment's routes), so retiring a domain costs no function invocation
+      // and no rendered page.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: RETIRED_HOST_PATTERN }],
+        destination: `${PRIMARY_ORIGIN}/:path*`,
+        permanent: true,
+      },
       // Legacy paths from the AMRabbits site, where the guardian dogs used to live.
       { source: "/farm/livestock-guardian-dogs", destination: "/dogs/breed", permanent: true },
       { source: "/livestock-dogs", destination: "/dogs/breed", permanent: true },

@@ -1,4 +1,5 @@
 import { LINKS } from "@/app/_config/links";
+import { PRIMARY_ORIGIN } from "@/app/_config/domain";
 
 /**
  * Canonical business identity (NAP — Name, Address, Phone) for AM Working Dogs.
@@ -10,14 +11,19 @@ import { LINKS } from "@/app/_config/links";
 
 /**
  * Canonical origin, used for canonicals, the sitemap, robots.txt, OG image URLs,
- * and JSON-LD ids. Getting this wrong points Google at a domain that isn't live,
- * so it resolves in priority order rather than being hard-coded:
+ * and JSON-LD ids. Getting this wrong points Google at the wrong domain, so it
+ * resolves in priority order:
  *
- *   1. NEXT_PUBLIC_SITE_URL — set this once the real domain is attached.
- *   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel sets this to the project's primary
- *      production domain, so a plain *.vercel.app deploy is self-describing and
- *      it flips to the custom domain automatically once one is assigned.
- *   3. localhost for local dev.
+ *   1. NEXT_PUBLIC_SITE_URL — escape hatch, pins an exact origin.
+ *   2. PRIMARY_ORIGIN on any deploy running on Vercel.
+ *   3. localhost for local dev, including `next start` against a local build.
+ *
+ * Step 2 used to read VERCEL_PROJECT_PRODUCTION_URL and describe whatever domain
+ * Vercel called primary. That was right while the site was a bare *.vercel.app
+ * deploy and wrong the moment a second domain was attached: during a domain
+ * cutover it names the outgoing one, and on a preview deploy it hands Google a
+ * throwaway hostname to compete with the real pages. The main domain is a
+ * decision, not something to infer from the environment — so it's pinned.
  *
  * No trailing slash — callers concatenate paths directly.
  */
@@ -25,8 +31,7 @@ function resolveSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
 
-  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercelHost) return `https://${vercelHost}`;
+  if (process.env.VERCEL) return PRIMARY_ORIGIN;
 
   return "http://localhost:3000";
 }

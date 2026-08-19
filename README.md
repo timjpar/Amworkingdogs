@@ -94,28 +94,40 @@ The project is a stock Next.js app — Vercel auto-detects the framework, and no
 build configuration is needed. Import the GitHub repo at
 [vercel.com/new](https://vercel.com/new) and every push to `main` deploys.
 
+### Domains
+
+The main domain is **`easttnfarmdogs.com`**. `amworkingdogs.com` was the original
+one; it stays attached to the project but only 308s to the new domain, path and
+query intact, so old links and anything already indexed keep working.
+
+Both live in `app/_config/domain.ts` — `PRIMARY_ORIGIN` and
+`RETIRED_HOST_PATTERN`. That module is imported by the app *and* by
+`next.config.ts`, which is the point: the canonical the app advertises and the
+redirect that retires the old domain can't drift apart. To change the main
+domain, edit that one file and attach the domain in Vercel.
+
 ### Site URL
 
 `SITE_URL` (in `app/_config/business.ts`) drives canonicals, `sitemap.xml`,
 `robots.txt`, OG image URLs, and the JSON-LD ids. It resolves in this order:
 
-1. `NEXT_PUBLIC_SITE_URL` — set this to pin an exact origin.
-2. `VERCEL_PROJECT_PRODUCTION_URL` — set by Vercel automatically. A plain
-   `*.vercel.app` deploy describes itself correctly, and it switches to the
-   custom domain on its own once one is attached to the project.
-3. `http://localhost:3000` for local dev.
+1. `NEXT_PUBLIC_SITE_URL` — escape hatch, pins an exact origin.
+2. `PRIMARY_ORIGIN` on any deploy running on Vercel.
+3. `http://localhost:3000` for local dev — including `npm run start` against a
+   local production build, so a local smoke test never advertises the live domain.
 
-So **you don't have to set anything** to deploy correctly. Only set
-`NEXT_PUBLIC_SITE_URL` if you need to override what Vercel reports — for example
-to force `https://amworkingdogs.com` while a `www` domain is also attached.
+So **you don't have to set anything** to deploy correctly, and every deploy —
+production or preview — canonicalizes to the main domain rather than to whatever
+hostname it happens to be reachable at.
 
 Because every page is statically prerendered, this value is baked in at build
-time: after changing the domain or the env var, redeploy so the sitemap and
-canonicals pick it up.
+time: after changing the domain, redeploy so the sitemap and canonicals pick it up.
 
 ## Before going live
 
-- [ ] Attach the real domain in Vercel (Project → Settings → Domains), then redeploy.
+- [ ] Attach `easttnfarmdogs.com` in Vercel (Project → Settings → Domains), set it
+      as the production domain, keep `amworkingdogs.com` attached so its redirect
+      still resolves, then redeploy.
 - [ ] Set up a dedicated email/phone if the dogs shouldn't share AMRabbits' contact info.
 - [ ] **Activate the contact form with FormSubmit.** The form posts from the
       visitor's browser to `formsubmit.co` (see `app/_lib/submitForm.ts`), with
