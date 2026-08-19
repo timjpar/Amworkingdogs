@@ -3,8 +3,52 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import type { GalleryImage } from "@/app/_data/gallery";
 
-export type GalleryImage = { src: string; alt: string };
+export type { GalleryImage };
+
+/**
+ * A photo carrying its own srcSet is hosted somewhere that already publishes
+ * fixed sizes (the Flickr album), so it renders as a plain <img> straight from
+ * that host — skipping our image optimizer entirely. Photos in /public keep
+ * going through next/image exactly as before.
+ */
+function GalleryPhoto({
+  img,
+  sizes,
+  className,
+  priority = false,
+}: {
+  img: GalleryImage;
+  sizes: string;
+  className: string;
+  priority?: boolean;
+}) {
+  if (img.srcSet) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={img.src}
+        srcSet={img.srcSet}
+        sizes={sizes}
+        alt={img.alt}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        className={`absolute inset-0 h-full w-full ${className}`}
+      />
+    );
+  }
+  return (
+    <Image
+      src={img.src}
+      alt={img.alt}
+      fill
+      priority={priority}
+      sizes={sizes}
+      className={className}
+    />
+  );
+}
 
 export function GalleryGrid({
   images,
@@ -29,12 +73,10 @@ export function GalleryGrid({
             className={`rounded-card ${aspectClass} relative overflow-hidden border cursor-zoom-in focus:outline-none focus-visible:ring-2`}
             style={{ borderColor: "var(--c-line)" }}
           >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className="object-cover hover:scale-105 transition-transform duration-300"
+            <GalleryPhoto
+              img={img}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </button>
         ))}
@@ -163,14 +205,12 @@ function Lightbox({
 
       <div className="absolute inset-0 p-4 pt-16 pb-12 sm:px-20 sm:py-16 pointer-events-none">
         <div className="relative w-full h-full">
-          <Image
+          <GalleryPhoto
             key={img.src}
-            src={img.src}
-            alt={img.alt}
-            fill
+            img={img}
+            sizes="100vw"
             priority
             className="object-contain select-none"
-            sizes="100vw"
           />
         </div>
       </div>

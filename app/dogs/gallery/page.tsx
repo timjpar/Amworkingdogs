@@ -6,6 +6,7 @@ import { GalleryGrid } from "@/app/_components/ui/GalleryGrid";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { breadcrumbSchema } from "@/app/_lib/schema";
 import { litterPortraits, puppyPhotos, adultPhotos } from "@/app/_data/gallery";
+import { fetchFlickrPuppyPhotos } from "@/app/_lib/flickr";
 import { LINKS } from "@/app/_config/links";
 
 export const metadata: Metadata = {
@@ -14,7 +15,13 @@ export const metadata: Metadata = {
     "Photos of our Kangal x Great Pyrenees livestock guardian dogs and puppies in Newport, Tennessee — newborns in the straw through working adults on pasture.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  // The "Puppies Growing Up" set is maintained in the Flickr album so it can be
+  // updated without a deploy. If the album is empty or Flickr is unreachable,
+  // fall back to the photos bundled in /public so the section is never blank.
+  const flickrPhotos = await fetchFlickrPuppyPhotos();
+  const growingUpPhotos = flickrPhotos.length > 0 ? flickrPhotos : puppyPhotos;
+
   return (
     <>
       <JsonLd
@@ -50,7 +57,7 @@ export default function GalleryPage() {
             subtitle="From newborn to eight weeks — straw nest to tall grass."
             className="mb-10"
           />
-          <GalleryGrid images={puppyPhotos} />
+          <GalleryGrid images={growingUpPhotos} />
         </div>
       </section>
 

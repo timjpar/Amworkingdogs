@@ -1,6 +1,18 @@
 import { puppies } from "@/app/_data/litter";
 
-export type GalleryImage = { src: string; alt: string };
+export type GalleryImage = {
+  src: string;
+  alt: string;
+  /**
+   * Pre-built srcset for photos hosted somewhere that already publishes fixed
+   * sizes (the Flickr album). When present, GalleryGrid renders a plain <img>
+   * pointing at that host instead of routing the photo through next/image —
+   * no image transformation is billed and no bytes come off our own origin.
+   */
+  srcSet?: string;
+  /** Link back to the photo's page on its host, where one exists. */
+  href?: string;
+};
 
 /**
  * Portraits of the current litter, derived from the roster so a new litter
