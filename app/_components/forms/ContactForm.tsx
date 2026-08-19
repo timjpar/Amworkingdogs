@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import { submitContact } from "@/app/_actions/contact";
-
-const SUBJECTS = [
-  { value: "puppy", label: "Puppy availability" },
-  { value: "reserve", label: "Reserving a puppy" },
-  { value: "visit", label: "Visiting the farm" },
-  { value: "advice", label: "Guardian dog questions" },
-  { value: "other", label: "Something else" },
-];
+import { CONTACT_LIMITS, CONTACT_SUBJECTS } from "@/app/_config/contact";
 
 export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: string }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -63,13 +56,13 @@ export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: str
           <label htmlFor="cf-name" className="block text-sm font-medium mb-1.5" style={{ color: "var(--c-ink)" }}>
             Name <span aria-hidden="true" style={{ color: "var(--c-brand)" }}>*</span>
           </label>
-          <input id="cf-name" name="name" type="text" required autoComplete="name" className="input-base" placeholder="Your name" />
+          <input id="cf-name" name="name" type="text" required maxLength={CONTACT_LIMITS.name} autoComplete="name" className="input-base" placeholder="Your name" />
         </div>
         <div>
           <label htmlFor="cf-email" className="block text-sm font-medium mb-1.5" style={{ color: "var(--c-ink)" }}>
             Email <span aria-hidden="true" style={{ color: "var(--c-brand)" }}>*</span>
           </label>
-          <input id="cf-email" name="email" type="email" required autoComplete="email" className="input-base" placeholder="you@email.com" />
+          <input id="cf-email" name="email" type="email" required maxLength={CONTACT_LIMITS.email} autoComplete="email" className="input-base" placeholder="you@email.com" />
         </div>
       </div>
 
@@ -78,14 +71,14 @@ export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: str
           <label htmlFor="cf-phone" className="block text-sm font-medium mb-1.5" style={{ color: "var(--c-ink)" }}>
             Phone
           </label>
-          <input id="cf-phone" name="phone" type="tel" autoComplete="tel" className="input-base" placeholder="Optional, but faster" />
+          <input id="cf-phone" name="phone" type="tel" maxLength={CONTACT_LIMITS.phone} autoComplete="tel" className="input-base" placeholder="Optional, but faster" />
         </div>
         <div>
           <label htmlFor="cf-subject" className="block text-sm font-medium mb-1.5" style={{ color: "var(--c-ink)" }}>
             What&apos;s this about?
           </label>
           <select id="cf-subject" name="subject" className="input-base" defaultValue={defaultSubject}>
-            {SUBJECTS.map((s) => (
+            {CONTACT_SUBJECTS.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
             ))}
           </select>
@@ -101,6 +94,7 @@ export function ContactForm({ defaultSubject = "puppy" }: { defaultSubject?: str
           name="message"
           required
           rows={5}
+          maxLength={CONTACT_LIMITS.message}
           className="input-base resize-none"
           placeholder="Tell us what you're running — stock, acreage, fencing, and what you're up against for predators."
         />
