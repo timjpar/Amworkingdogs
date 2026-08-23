@@ -71,7 +71,7 @@ export const puppies: Puppy[] = [
     id: "purple",
     name: "Purple",
     sex: "Female",
-    status: "available",
+    status: "sold",
     collar: "#7a3fb5",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-purple-female.jpeg`,
     note: "Darkest mask of the litter and a real talker.",
