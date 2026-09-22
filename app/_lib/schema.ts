@@ -5,6 +5,7 @@ import {
   PUPPY_PRICE,
 } from "@/app/_config/business";
 import { CROSS } from "@/app/_data/breed";
+import { takingPreorders } from "@/app/_data/litter";
 import type { FaqItem } from "@/app/_types";
 
 /**
@@ -76,7 +77,10 @@ export function puppyProductSchema(): JsonLd {
       "@type": "Offer",
       price: PUPPY_PRICE,
       priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
+      // Between litters the offer is a pre-order, not a pup on the ground.
+      availability: takingPreorders
+        ? "https://schema.org/PreOrder"
+        : "https://schema.org/InStock",
       priceValidUntil,
       url: `${SITE_URL}/puppies`,
       seller: { "@id": BUSINESS_ID },

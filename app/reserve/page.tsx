@@ -7,6 +7,7 @@ import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { breadcrumbSchema } from "@/app/_lib/schema";
 import { PUPPY_PRICE, DEPOSIT } from "@/app/_config/business";
 import { LINKS } from "@/app/_config/links";
+import { takingPreorders, PREORDER_HREF } from "@/app/_data/litter";
 
 export const metadata: Metadata = {
   title: "Reserve a Guardian Puppy",
@@ -65,6 +66,32 @@ export default function ReservePage() {
         imageSrc="/images/dogs/kangal-pyrenees-livestock-guardian-dogs-pack.jpeg"
         imagePosition="center 45%"
       />
+
+      {/* Sold out — nothing to hold a deposit on until the next litter */}
+      {takingPreorders && (
+        <section className="pt-12 px-4" style={{ background: "var(--c-page)" }}>
+          <div
+            className="max-w-3xl mx-auto rounded-card border p-6 md:p-8 text-center shadow-soft"
+            style={{ background: "var(--c-panel)", borderColor: "var(--c-accent)" }}
+          >
+            <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--c-title)" }}>
+              This litter is sold out
+            </h2>
+            <p className="text-base leading-relaxed mb-6 max-w-xl mx-auto" style={{ color: "var(--c-ink)" }}>
+              Every pup has gone home, so there&apos;s nothing to hold a deposit on right now.
+              Get on the pre-order list and Michael will reach out as soon as the next litter
+              is born.
+            </p>
+            <Link
+              href={PREORDER_HREF}
+              className="inline-flex items-center justify-center h-12 px-8 rounded-btn font-semibold transition-all hover:opacity-90"
+              style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
+            >
+              Pre-Order From the Next Litter
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Steps */}
       <section className="py-16 px-4" style={{ background: "var(--c-page)" }}>
@@ -198,16 +225,20 @@ export default function ReservePage() {
       <section className="py-16 px-4" style={{ background: "var(--c-page)" }}>
         <div className="max-w-4xl mx-auto text-center">
           <SectionHeader
-            title="Not Sure What's Open?"
-            subtitle="The available-puppies page has the current litter, and we post new pups to Facebook and Instagram as they arrive."
+            title={takingPreorders ? "Waiting on the Next Litter?" : "Not Sure What's Open?"}
+            subtitle={
+              takingPreorders
+                ? "Get on the pre-order list and Michael will reach out when the next litter is born. We post new pups to Facebook and Instagram as they arrive, too."
+                : "The available-puppies page has the current litter, and we post new pups to Facebook and Instagram as they arrive."
+            }
             className="mb-8"
           />
           <Link
-            href="/puppies"
+            href={takingPreorders ? PREORDER_HREF : "/puppies"}
             className="inline-flex items-center justify-center h-14 px-10 rounded-btn font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
             style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)", textDecoration: "none" }}
           >
-            View Available Puppies
+            {takingPreorders ? "Join the Pre-Order List" : "View Available Puppies"}
           </Link>
         </div>
       </section>

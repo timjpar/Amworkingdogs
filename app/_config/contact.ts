@@ -22,6 +22,14 @@ export const CONTACT_SUBJECT_VALUES: readonly string[] = CONTACT_SUBJECTS.map(
   (s) => s.value,
 );
 
+/** "What are you looking for?" on the next-litter pre-order form. */
+export const PREORDER_WANTS = [
+  { value: "either", label: "No preference" },
+  { value: "female", label: "A female" },
+  { value: "male", label: "A male" },
+  { value: "pair", label: "A pair" },
+] as const;
+
 /** Upper bounds on each field. Anything longer is rejected, not truncated. */
 export const CONTACT_LIMITS = {
   name: 100,

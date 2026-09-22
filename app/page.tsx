@@ -11,7 +11,7 @@ import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { puppyProductSchema } from "@/app/_lib/schema";
 import { CROSS, parentBreeds, suitedFor } from "@/app/_data/breed";
 import { litterPortraits } from "@/app/_data/gallery";
-import { litterCounts } from "@/app/_data/litter";
+import { litterCounts, takingPreorders, PREORDER_HREF } from "@/app/_data/litter";
 import { PUPPY_PRICE } from "@/app/_config/business";
 import { LINKS } from "@/app/_config/links";
 
@@ -107,11 +107,11 @@ export default function HomePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/puppies"
+                href={takingPreorders ? PREORDER_HREF : "/puppies"}
                 className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-semibold text-lg shadow-soft transition-all hover:opacity-90 hover:-translate-y-0.5 active:scale-[0.98]"
                 style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)", textDecoration: "none" }}
               >
-                See Available Puppies
+                {takingPreorders ? "Pre-Order a Puppy" : "See Available Puppies"}
               </Link>
               <Link
                 href="/dogs/breed"
@@ -309,13 +309,15 @@ export default function HomePage() {
       <section className="py-20 px-4" style={{ background: "var(--c-panel)" }}>
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            title="Meet This Litter"
+            title={takingPreorders ? "Our Last Litter" : "Meet This Litter"}
             subtitle={
-              litterCounts.available > 0
+              takingPreorders
+                ? "Every pup from this litter has gone home. Pre-orders are open for the next one — get on the list and Michael will reach out when it's born."
+                : litterCounts.available > 0
                 ? `${litterCounts.available} of ${litterCounts.total} still available. They go by collar color until their new families name them.`
                 : "They go by collar color until their new families name them."
             }
-            eyebrow="On the ground now"
+            eyebrow={takingPreorders ? "Sold out" : "On the ground now"}
             decoration={<Paw size={36} color="var(--c-accent)" />}
             className="mb-12"
           />
@@ -339,11 +341,11 @@ export default function HomePage() {
           </div>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/puppies"
+              href={takingPreorders ? PREORDER_HREF : "/puppies"}
               className="inline-flex items-center justify-center h-12 px-8 rounded-btn font-semibold transition-all hover:opacity-90"
               style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
             >
-              See Every Puppy
+              {takingPreorders ? "Pre-Order the Next Litter" : "See Every Puppy"}
             </Link>
             <Link
               href="/dogs/gallery"
@@ -389,14 +391,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      <CTABanner
-        title="Ready to Put a Guardian on Your Stock?"
-        subtitle={`Puppies are $${PUPPY_PRICE}. A deposit holds your pick from the current litter.`}
-        primaryLabel="Reserve a Puppy"
-        primaryHref="/reserve"
-        secondaryLabel="See What's Available"
-        secondaryHref="/puppies"
-      />
+      {takingPreorders ? (
+        <CTABanner
+          title="Ready to Put a Guardian on Your Stock?"
+          subtitle="This litter is sold out. Get on the pre-order list for the next one."
+          primaryLabel="Pre-Order a Puppy"
+          primaryHref={PREORDER_HREF}
+          secondaryLabel="How Buying Works"
+          secondaryHref="/buying/process"
+        />
+      ) : (
+        <CTABanner
+          title="Ready to Put a Guardian on Your Stock?"
+          subtitle={`Puppies are $${PUPPY_PRICE}. A deposit holds your pick from the current litter.`}
+          primaryLabel="Reserve a Puppy"
+          primaryHref="/reserve"
+          secondaryLabel="See What's Available"
+          secondaryHref="/puppies"
+        />
+      )}
     </>
   );
 }

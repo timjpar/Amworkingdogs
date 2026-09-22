@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LITTER, litterCounts } from "@/app/_data/litter";
+import { LITTER, litterCounts, PREORDER_HREF } from "@/app/_data/litter";
 
 // Text follows the litter status and the live roster count in
 // app/_data/litter.ts, so the banner can't drift out of sync with /puppies.
@@ -12,16 +12,19 @@ const MESSAGES = {
         : "Guardian puppies available",
     detail: "75% Kangal, 25% Great Pyrenees.",
     cta: "Meet the litter",
+    href: "/puppies",
   },
   expecting: {
     text: "A guardian litter is on the way",
     detail: "Deposits hold a spot in line.",
     cta: "Get on the list",
+    href: PREORDER_HREF,
   },
   between: {
-    text: "Between litters right now",
-    detail: "Call to get on the list for the next one.",
-    cta: "Learn more",
+    text: "This litter is sold out",
+    detail: "Pre-orders are open for the next one.",
+    cta: "Pre-order now",
+    href: PREORDER_HREF,
   },
 } as const;
 
@@ -42,7 +45,7 @@ export function AnnouncementBanner() {
             a single line instead of pushing the nav down three. */}
         <span className="hidden sm:inline">{message.detail}</span>
         <Link
-          href="/puppies"
+          href={message.href}
           className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:opacity-80 whitespace-nowrap"
           style={{ color: "var(--c-accent-fg)", textDecoration: "underline" }}
         >

@@ -5,6 +5,7 @@ import { PageHero } from "@/app/_components/ui/PageHero";
 import { SectionHeader } from "@/app/_components/ui/SectionHeader";
 import { CTABanner } from "@/app/_components/ui/CTABanner";
 import { PuppyCard } from "@/app/_components/cards/PuppyCard";
+import { PreorderForm } from "@/app/_components/forms/PreorderForm";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { puppyProductSchema, breadcrumbSchema } from "@/app/_lib/schema";
 import {
@@ -13,6 +14,8 @@ import {
   puppiesByAvailability,
   includedWithPuppy,
   matchingNotes,
+  takingPreorders,
+  PREORDER_HREF,
 } from "@/app/_data/litter";
 import { CROSS } from "@/app/_data/breed";
 import { PUPPY_PRICE, DEPOSIT } from "@/app/_config/business";
@@ -25,21 +28,33 @@ export const metadata: Metadata = {
 
 const statusCopy = {
   available: {
+    heroTitle: "Available Guardian Puppies",
+    heroSubtitle: "Raised in the barn with the flock, health checked, and ready to go to work.",
     badge: "Puppies available",
     heading: "Meet the Litter",
     sub: "Every pup below is from the current litter. Call or text to check what's still open — the list moves fast, and this page won't always be same-day accurate.",
   },
   expecting: {
+    heroTitle: "Guardian Puppies",
+    heroSubtitle: "A new litter is on the way, and pre-orders are open now.",
     badge: "Litter expected",
     heading: "A Litter Is On the Way",
-    sub: "Deposits hold a spot in line before the pups hit the ground. Call to get on the list.",
+    sub: "Deposits hold a spot in line before the pups hit the ground. Get on the list below, or call and we'll talk it through.",
   },
   between: {
-    badge: "Between litters",
-    heading: "Between Litters Right Now",
-    sub: "We're expecting again before long. Call and we'll tell you where things stand and put you on the list.",
+    heroTitle: "Guardian Puppies",
+    heroSubtitle: "The last litter is sold out. Pre-orders are open for the next one.",
+    badge: "Sold out",
+    heading: "Pre-Order From the Next Litter",
+    sub: "Every pup from our last litter has gone home. Get on the list below and Michael will reach out as soon as the next litter is born.",
   },
 } as const;
+
+const preorderSteps = [
+  "Put your name down — tell us what you're guarding and whether you're after a male, a female, or a pair.",
+  "Michael reaches out as soon as the next litter is born.",
+  `Pick your pup. A $${DEPOSIT} deposit holds it, and the balance is due at pickup in Newport.`,
+];
 
 export default function PuppiesPage() {
   const copy = statusCopy[LITTER.status];
@@ -59,8 +74,8 @@ export default function PuppiesPage() {
 
       <PageHero
         eyebrow={CROSS.ratio}
-        title="Available Guardian Puppies"
-        subtitle="Raised in the barn with the flock, health checked, and ready to go to work."
+        title={copy.heroTitle}
+        subtitle={copy.heroSubtitle}
         imageSrc="/images/dogs/kangal-pyrenees-guardian-puppies-pair.jpeg"
         imagePosition="center 40%"
       />
@@ -125,30 +140,78 @@ export default function PuppiesPage() {
             </>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-            <a
-              href={LINKS.phoneHref}
-              className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
-            >
-              Call or Text {LINKS.phone}
-            </a>
-            <Link
-              href="/reserve"
-              className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg border-2 transition-all hover:opacity-80"
-              style={{ borderColor: "var(--c-brand)", color: "var(--c-brand)", textDecoration: "none" }}
-            >
-              Reserve With a Deposit
-            </Link>
-          </div>
+          {!takingPreorders && (
+            <>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+                <a
+                  href={LINKS.phoneHref}
+                  className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg transition-all hover:opacity-90 active:scale-[0.98]"
+                  style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)", textDecoration: "none" }}
+                >
+                  Call or Text {LINKS.phone}
+                </a>
+                <Link
+                  href="/reserve"
+                  className="inline-flex items-center justify-center h-14 px-8 rounded-btn font-bold text-lg border-2 transition-all hover:opacity-80"
+                  style={{ borderColor: "var(--c-brand)", color: "var(--c-brand)", textDecoration: "none" }}
+                >
+                  Reserve With a Deposit
+                </Link>
+              </div>
 
-          <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
-            A ${DEPOSIT}{" "}
-            deposit holds your pick and comes off the total. Deposits aren&apos;t required
-            for same-day pickups.
-          </p>
+              <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
+                A ${DEPOSIT}{" "}
+                deposit holds your pick and comes off the total. Deposits aren&apos;t required
+                for same-day pickups.
+              </p>
+            </>
+          )}
         </div>
       </section>
+
+      {/* PRE-ORDERS — replaces the roster's call to action once the litter is gone */}
+      {takingPreorders && (
+        <section id="pre-order" className="pb-16 px-4 scroll-mt-24" style={{ background: "var(--c-page)" }}>
+          <div
+            className="max-w-5xl mx-auto grid md:grid-cols-[1fr_1.4fr] gap-10 items-start rounded-card border p-6 md:p-10 shadow-soft"
+            style={{ background: "var(--c-panel)", borderColor: "var(--c-line)" }}
+          >
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "var(--c-title)" }}>
+                Pre-Order a Puppy
+              </h2>
+              <p className="text-base leading-relaxed mb-6" style={{ color: "var(--c-ink)" }}>
+                Getting on the list is free and doesn&apos;t commit you to anything.
+              </p>
+              <ol className="space-y-4">
+                {preorderSteps.map((step, i) => (
+                  <li key={step} className="flex items-start gap-3">
+                    <span
+                      className="flex-none w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold"
+                      style={{ background: "var(--c-brand)", color: "var(--c-brand-fg)" }}
+                      aria-hidden="true"
+                    >
+                      {i + 1}
+                    </span>
+                    <span className="text-sm leading-relaxed pt-1" style={{ color: "var(--c-ink)" }}>
+                      {step}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="text-sm mt-6" style={{ color: "var(--c-ink-2)" }}>
+                Rather talk it through? Call or text Michael at{" "}
+                <a href={LINKS.phoneHref} style={{ color: "var(--c-link)" }}>
+                  {LINKS.phone}
+                </a>
+                .
+              </p>
+            </div>
+
+            <PreorderForm />
+          </div>
+        </section>
+      )}
 
       {/* THE ROSTER */}
       {showRoster && (
@@ -248,9 +311,13 @@ export default function PuppiesPage() {
 
       <CTABanner
         title="Let's Get You a Guardian"
-        subtitle="Call for current availability, or reserve online and pick up in Newport."
-        primaryLabel="Reserve a Puppy"
-        primaryHref="/reserve"
+        subtitle={
+          takingPreorders
+            ? "Get on the pre-order list for the next litter, or read how buying works first."
+            : "Call for current availability, or reserve online and pick up in Newport."
+        }
+        primaryLabel={takingPreorders ? "Pre-Order a Puppy" : "Reserve a Puppy"}
+        primaryHref={takingPreorders ? PREORDER_HREF : "/reserve"}
         secondaryLabel="How Buying Works"
         secondaryHref="/buying/process"
       />

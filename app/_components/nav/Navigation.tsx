@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { SocialLinks } from "@/app/_components/ui/SocialLinks";
 import { LINKS } from "@/app/_config/links";
+import { takingPreorders, PREORDER_HREF } from "@/app/_data/litter";
 
 const dogLinks: { href: string; label: string }[] = [
   { href: "/dogs/breed", label: "The Breed" },
@@ -23,6 +24,11 @@ const buyingLinks: { href: string; label: string }[] = [
   { href: "/buying/transport", label: "Pickup & Transport" },
   { href: "/guardian-dogs-for-sale", label: "Areas We Serve" },
 ];
+
+/** The accent button in the bar and the drawer follows the litter status. */
+const cta = takingPreorders
+  ? { href: PREORDER_HREF, label: "Pre-Order a Puppy" }
+  : { href: "/puppies", label: "Available Puppies" };
 
 const mainLinks = [
   { href: "/", label: "Home" },
@@ -92,11 +98,11 @@ export function Navigation() {
             Call
           </a>
           <Link
-            href="/puppies"
+            href={cta.href}
             className="h-9 px-4 rounded-btn text-sm font-semibold inline-flex items-center justify-center transition-all hover:opacity-90"
             style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)", textDecoration: "none" }}
           >
-            Available Puppies
+            {cta.label}
           </Link>
         </div>
       </nav>
@@ -236,12 +242,12 @@ export function Navigation() {
               style={{ borderColor: "color-mix(in srgb, var(--c-rail-fg) 15%, transparent)" }}
             >
               <Link
-                href="/puppies"
+                href={cta.href}
                 className="flex items-center justify-center h-12 rounded-btn font-semibold text-sm w-full"
                 style={{ background: "var(--c-accent)", color: "var(--c-accent-fg)", textDecoration: "none" }}
                 onClick={() => setDrawerOpen(false)}
               >
-                Available Puppies
+                {cta.label}
               </Link>
               <a
                 href={LINKS.phoneHref}

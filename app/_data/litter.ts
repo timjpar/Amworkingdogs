@@ -7,7 +7,9 @@
  * and whether the card is greyed out. Nothing else needs touching.
  *
  * When the whole litter is gone, set LITTER.status to "between" (or
- * "expecting" if the next one is on the way) and the page rewrites itself.
+ * "expecting" if the next one is on the way) and the page rewrites itself:
+ * the banner, the home page, /puppies, /reserve, and the gallery all switch
+ * over to taking pre-orders for the next litter.
  */
 
 export type LitterStatus = "available" | "expecting" | "between";
@@ -35,12 +37,22 @@ export interface Puppy {
 }
 
 export const LITTER = {
-  status: "available" as LitterStatus,
+  status: "between" as LitterStatus,
   /** Shown as-is — keep it vague enough to stay true for a few weeks. */
   born: "On the ground now",
   readyDate: "Ready to go home at eight weeks",
   note: "Fawn coats with black masks, males and females both. Whelped in the barn and raised with the poultry.",
 };
+
+/**
+ * Out of pups (or waiting on the next litter), the site stops selling from the
+ * roster and takes pre-orders instead. Every page that changes its copy keys
+ * off this, so LITTER.status stays the only switch.
+ */
+export const takingPreorders = LITTER.status !== "available";
+
+/** Where the pre-order form lives on /puppies. */
+export const PREORDER_HREF = "/puppies#pre-order";
 
 const PUPPY_DIR = "/images/dogs/puppies";
 
@@ -53,7 +65,7 @@ export const puppies: Puppy[] = [
     id: "aqua",
     name: "Aqua",
     sex: "Female",
-    status: "available",
+    status: "sold",
     collar: "#4fc3c3",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-aqua-female.jpeg`,
     note: "Bold and busy — first one to the fence to meet you.",
@@ -62,7 +74,7 @@ export const puppies: Puppy[] = [
     id: "rose",
     name: "Rose",
     sex: "Female",
-    status: "available",
+    status: "sold",
     collar: "#b7737f",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-rose-female.jpeg`,
     note: "Square, heavy-boned, and steady on her feet.",
@@ -80,7 +92,7 @@ export const puppies: Puppy[] = [
     id: "champagne",
     name: "Champagne",
     sex: "Female",
-    status: "available",
+    status: "sold",
     collar: "#ddc9a3",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-champagne-female.jpeg`,
     note: "Lighter sable coat, easy to handle, loves being fussed over.",
@@ -98,7 +110,7 @@ export const puppies: Puppy[] = [
     id: "hot-pink",
     name: "Hot Pink",
     sex: "Female",
-    status: "available",
+    status: "sold",
     collar: "#e8456f",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-hot-pink-female.jpeg`,
     note: "Calm one. Happy to sit in your lap and watch the birds.",
@@ -116,7 +128,7 @@ export const puppies: Puppy[] = [
     id: "blue",
     name: "Blue",
     sex: "Male",
-    status: "available",
+    status: "sold",
     collar: "#1f4e9c",
     image: `${PUPPY_DIR}/kangal-pyrenees-guardian-puppy-blue-male.jpeg`,
     note: "The runt, and all the scrappier for it. Eating well and keeping up fine.",

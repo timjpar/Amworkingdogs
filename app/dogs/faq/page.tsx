@@ -7,6 +7,7 @@ import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { faqPageSchema, breadcrumbSchema } from "@/app/_lib/schema";
 import { faqItems } from "@/app/_data/faq";
 import { LINKS } from "@/app/_config/links";
+import { takingPreorders, PREORDER_HREF } from "@/app/_data/litter";
 
 export const metadata: Metadata = {
   title: "Livestock Guardian Dog FAQ",
@@ -84,14 +85,25 @@ export default function FaqPage() {
         </div>
       </section>
 
-      <CTABanner
-        title="Ready to Pick a Puppy?"
-        subtitle="See what's on the ground right now."
-        primaryLabel="Available Puppies"
-        primaryHref="/puppies"
-        secondaryLabel="Reserve With a Deposit"
-        secondaryHref="/reserve"
-      />
+      {takingPreorders ? (
+        <CTABanner
+          title="Ready to Pick a Puppy?"
+          subtitle="This litter is sold out. Pre-orders are open for the next one."
+          primaryLabel="Pre-Order a Puppy"
+          primaryHref={PREORDER_HREF}
+          secondaryLabel="Contact Us"
+          secondaryHref="/contact"
+        />
+      ) : (
+        <CTABanner
+          title="Ready to Pick a Puppy?"
+          subtitle="See what's on the ground right now."
+          primaryLabel="Available Puppies"
+          primaryHref="/puppies"
+          secondaryLabel="Reserve With a Deposit"
+          secondaryHref="/reserve"
+        />
+      )}
     </>
   );
 }

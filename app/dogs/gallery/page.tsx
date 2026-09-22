@@ -8,6 +8,7 @@ import { breadcrumbSchema } from "@/app/_lib/schema";
 import { litterPortraits, puppyPhotos, adultPhotos } from "@/app/_data/gallery";
 import { fetchFlickrPuppyPhotos } from "@/app/_lib/flickr";
 import { LINKS } from "@/app/_config/links";
+import { takingPreorders, PREORDER_HREF } from "@/app/_data/litter";
 
 export const metadata: Metadata = {
   title: "Photo Gallery — Guardian Dogs & Puppies",
@@ -42,7 +43,7 @@ export default async function GalleryPage() {
       <section className="py-16 px-4" style={{ background: "var(--c-page)" }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeader
-            title="The Current Litter"
+            title={takingPreorders ? "The Last Litter" : "The Current Litter"}
             subtitle="Every pup, by collar color. Tap any photo to see it full screen."
             className="mb-10"
           />
@@ -93,14 +94,25 @@ export default async function GalleryPage() {
         </div>
       </section>
 
-      <CTABanner
-        title="See One You Like?"
-        subtitle="Call about the current litter, or put a deposit on your pick."
-        primaryLabel="Available Puppies"
-        primaryHref="/puppies"
-        secondaryLabel="Reserve a Puppy"
-        secondaryHref="/reserve"
-      />
+      {takingPreorders ? (
+        <CTABanner
+          title="Want One From the Next Litter?"
+          subtitle="This litter is sold out. Get on the pre-order list and we'll reach out when the next one is born."
+          primaryLabel="Pre-Order a Puppy"
+          primaryHref={PREORDER_HREF}
+          secondaryLabel="Contact Us"
+          secondaryHref="/contact"
+        />
+      ) : (
+        <CTABanner
+          title="See One You Like?"
+          subtitle="Call about the current litter, or put a deposit on your pick."
+          primaryLabel="Available Puppies"
+          primaryHref="/puppies"
+          secondaryLabel="Reserve a Puppy"
+          secondaryHref="/reserve"
+        />
+      )}
     </>
   );
 }

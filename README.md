@@ -45,8 +45,12 @@ of sync with each other. There is no second place to update.
 
 **Starting a new litter:** replace the `puppies` array, and set `LITTER.status`
 to `"available"`, `"expecting"`, or `"between"`. Between litters, the `/puppies`
-page hides the roster and rewrites its own headline. Portraits flow into the
-gallery automatically — no need to touch `gallery.ts`.
+page hides the roster, rewrites its own headline, and shows a **pre-order form**
+(`#pre-order`) that mails the same inbox as the contact form. While a litter is
+`"expecting"` the form shows too, above the roster. Anything other than
+`"available"` also points the banner, home page, `/reserve`, gallery, and FAQ
+at that form. Portraits flow into the gallery automatically — no need to touch
+`gallery.ts`.
 
 **A note on the per-puppy `note` field.** These describe individual animals to
 buyers, so they should be accurate. The ones currently in the file were drafted
