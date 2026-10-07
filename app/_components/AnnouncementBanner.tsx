@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { LITTER, litterCounts, PREORDER_HREF } from "@/app/_data/litter";
 
-// Text follows the litter status and the live roster count in
-// app/_data/litter.ts, so the banner can't drift out of sync with /puppies.
-// Not dismissible — no client state.
+// NOT CURRENTLY RENDERED — taken off the site 2026-10-07. Put it back above
+// <Navigation /> in app/layout.tsx to run it again; the text still follows the
+// litter status and the live roster count in app/_data/litter.ts, so it can't
+// drift out of sync with /puppies. Not dismissible — no client state.
 const MESSAGES = {
   available: {
     text:

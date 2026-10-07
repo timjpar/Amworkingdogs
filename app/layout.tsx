@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/app/_components/theme/ThemeProvider";
 import { ThemeSwitcher } from "@/app/_components/theme/ThemeSwitcher";
 import { Navigation } from "@/app/_components/nav/Navigation";
-import { AnnouncementBanner } from "@/app/_components/AnnouncementBanner";
 import { Footer } from "@/app/_components/Footer";
 import { JsonLd } from "@/app/_components/seo/JsonLd";
 import { localBusinessSchema } from "@/app/_lib/schema";
@@ -82,7 +81,6 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col antialiased">
         <JsonLd data={localBusinessSchema()} />
         <ThemeProvider>
-          <AnnouncementBanner />
           <Navigation />
           <main className="flex-1">{children}</main>
           <Footer />
